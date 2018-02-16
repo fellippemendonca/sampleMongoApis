@@ -69,7 +69,7 @@ function sumExtended(startDate, endDate, thresholds) {
 }
 
 
-// HELPER
+// HELPER to build dinamically conditions for an array of elements.
 function buildCond(elements) {
   let length = elements.length;
 
