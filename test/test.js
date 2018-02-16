@@ -20,21 +20,20 @@ describe('Database Tests', () => {
 
   describe('Test Database', () => {
 
+    let newSample = {
+      timestamp: new Date('2016-02-02'),
+      partitions: [
+        { key: 5, val: 20 },
+        { key: 10, val: 15 },
+        { key: 15, val: 55 },
+        { key: 35, val: 1 },
+        { key: 95, val: 22 }
+      ]
+    }
+
     it('New sample created at testDatabase', (done) => {
-      
-      let newSample = {
-        timestamp: new Date('2016-02-02'),
-        partitions: [
-          { key: 5, val: 20 },
-          { key: 10, val: 15 },
-          { key: 15, val: 55 },
-          { key: 35, val: 1 },
-          { key: 95, val: 22 }
-        ]
-      }
-      
       collections.sample.create(newSample)
-        .then(res => { done(); })
+        .then(res => { done(); newSample = res })
         .catch(err => { throw err; })
     });
 
@@ -49,35 +48,24 @@ describe('Database Tests', () => {
         })
         .catch(err => { throw err });
     });
-/*
+
     it('Should update data from test database', (done) => {
-      collections.sample.update()
+
+      collections.sample.update(newSample._id, { timestamp: new Date('2016-02-01') })
         .then(res => {
-          if (res.length > 0) {
-            done();
-          } else {
-            throw new Error('No data!');
-          };
+          let expect = { n: 1, nModified: 1, ok: 1 };
+          assert.deepEqual(res, expect)
+          done();
         })
         .catch(err => { throw err });
-    });*/
-/*
-    it('Should remove data from test database', (done) => {
-      collections.sample.remove()
-        .then(res => {
-          if (res.length > 0) {
-            done();
-          } else {
-            throw new Error('No data!');
-          };
-        })
-        .catch(err => { throw err });
-    });*/
+        
+    });
+    
+    
 
     it('Should retrieve the correct simple sum from test database', (done) => {
       collections.sample.sum('2016-02-01', '2016-02-03', 10)
         .then(res => {
-          //console.log(res);
           assert.deepEqual(res, { key: 10, below: 35, above: 78})
           done(); 
         })
@@ -88,7 +76,6 @@ describe('Database Tests', () => {
     it('Should retrieve the correct extended sum from test database', (done) => {
       collections.sample.sumExtended('2016-02-01', '2016-02-03', [10, 35])
         .then(res => {
-          //console.log(res);
           if (res.length > 0) {
             assert.deepEqual(res, [
               { key: 10, below: 35},
@@ -99,6 +86,16 @@ describe('Database Tests', () => {
           } else {
             throw new Error('No data!');
           };
+        })
+        .catch(err => { throw err });
+    });
+
+    it('Should remove data from test database', (done) => {
+      collections.sample.remove(newSample._id)
+        .then(res => {
+          let expect = { n: 1, ok: 1 };
+          assert.deepEqual(res, expect)
+          done();
         })
         .catch(err => { throw err });
     });
