@@ -2,7 +2,7 @@
   "name": "sampleMongoApis",
   "version": "0.0.1",
   "private": true,
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "mocha"
