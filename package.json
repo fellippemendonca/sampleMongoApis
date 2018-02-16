@@ -1,0 +1,16 @@
+{
+  "name": "sampleMongoApis",
+  "version": "0.0.1",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "mongoose": "^5.0.5"
+  },
+  "devDependencies": {
+    "mocha": "^5.0.1"
+  }
+}
