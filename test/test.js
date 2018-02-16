@@ -6,7 +6,6 @@ const assert = require('assert');
 
 describe('Database Tests', () => {
 
-
   before((done) => {
     mongoose.connect('mongodb://localhost/testDatabase');
     const db = mongoose.connection;
@@ -22,13 +21,7 @@ describe('Database Tests', () => {
 
     let newSample = {
       timestamp: new Date('2016-02-02'),
-      partitions: [
-        { key: 5, val: 20 },
-        { key: 10, val: 15 },
-        { key: 15, val: 55 },
-        { key: 35, val: 1 },
-        { key: 95, val: 22 }
-      ]
+      partitions: []
     }
 
     it('New sample created at testDatabase', (done) => {
@@ -51,22 +44,47 @@ describe('Database Tests', () => {
 
     it('Should update data from test database', (done) => {
 
-      collections.sample.update(newSample._id, { timestamp: new Date('2016-02-01') })
+      const newValues = {
+        timestamp: new Date('2016-02-01'),
+        partitions: [{ key: 15, val: 55 }]
+      };
+
+      collections.sample.update(newSample._id, newValues)
         .then(res => {
-          let expect = { n: 1, nModified: 1, ok: 1 };
-          assert.deepEqual(res, expect)
+          const expected = { n: 1, nModified: 1, ok: 1 };
+          assert.deepEqual(res, expected)
           done();
         })
         .catch(err => { throw err });
         
     });
-    
-    
 
+    it('Should update data from test database', (done) => {
+      const newValues = { 
+        timestamp: new Date('2016-02-02'),
+        partitions: [
+          { key: 5, val: 20 },
+          { key: 10, val: 15 },
+          { key: 15, val: 55 },
+          { key: 35, val: 1 },
+          { key: 95, val: 22 }
+        ]
+      };
+
+      collections.sample.update(newSample._id, newValues)
+        .then(res => {
+          const expected = { n: 1, nModified: 1, ok: 1 };
+          assert.deepEqual(res, expected)
+          done();
+        })
+        .catch(err => { throw err });
+    });
+    
     it('Should retrieve the correct simple sum from test database', (done) => {
       collections.sample.sum('2016-02-01', '2016-02-03', 10)
         .then(res => {
-          assert.deepEqual(res, { key: 10, below: 35, above: 78})
+          const expected = { key: 10, below: 35, above: 78};
+          assert.deepEqual(res, expected);
           done(); 
         })
         .catch(err => { throw err });
@@ -77,11 +95,12 @@ describe('Database Tests', () => {
       collections.sample.sumExtended('2016-02-01', '2016-02-03', [10, 35])
         .then(res => {
           if (res.length > 0) {
-            assert.deepEqual(res, [
+            const expected = [
               { key: 10, below: 35},
               { key: 35, below: 56},
               { key: 999, below: 22}
-             ])
+             ];
+            assert.deepEqual(res, expected);
             done();
           } else {
             throw new Error('No data!');
@@ -93,8 +112,18 @@ describe('Database Tests', () => {
     it('Should remove data from test database', (done) => {
       collections.sample.remove(newSample._id)
         .then(res => {
-          let expect = { n: 1, ok: 1 };
-          assert.deepEqual(res, expect)
+          const expected = { n: 1, ok: 1 };
+          assert.deepEqual(res, expected)
+          done();
+        })
+        .catch(err => { throw err });
+    });
+
+    it('Should remove inexistent data from test database', (done) => {
+      collections.sample.remove(newSample._id)
+        .then(res => {
+          const expected = { n: 0, ok: 1 };
+          assert.deepEqual(res, expected)
           done();
         })
         .catch(err => { throw err });
