@@ -90,6 +90,27 @@ describe('Database Tests', () => {
         .catch(err => { throw err });
     });
 
+    it('Should not retrieve any values for simple sum from test database using offset date range', (done) => {
+      collections.sample.sum('2018-02-01', '2018-02-03', 10)
+        .then(res => {
+          const expected = {};
+          assert.deepEqual(res, expected);
+          done(); 
+        })
+        .catch(err => { throw err });
+    });
+
+
+    it('Should not retrieve any values for simple sum from test database using threshold 999', (done) => {
+      collections.sample.sum('2018-02-01', '2018-02-03', 999)
+        .then(res => {
+          const expected = {};
+          assert.deepEqual(res, expected);
+          done(); 
+        })
+        .catch(err => { throw err });
+    });
+
 
     it('Should retrieve the correct extended sum from test database', (done) => {
       collections.sample.sumExtended('2016-02-01', '2016-02-03', [10, 35])
@@ -105,6 +126,26 @@ describe('Database Tests', () => {
           } else {
             throw new Error('No data!');
           };
+        })
+        .catch(err => { throw err });
+    });
+
+    it('Should not retrieve any values for extended sum from test database', (done) => {
+      collections.sample.sumExtended('2018-02-01', '2018-02-03', [10, 35])
+        .then(res => {
+          const expected = [];
+          assert.deepEqual(res, expected);
+          done();
+        })
+        .catch(err => { throw err });
+    });
+
+    it('Should retrieve the total sum of values for extended sum from test database', (done) => {
+      collections.sample.sumExtended('2016-02-01', '2016-02-03', [999])
+        .then(res => {
+          const expected = [ {key: 999, below: 113} ];
+          assert.deepEqual(res, expected);
+          done();
         })
         .catch(err => { throw err });
     });
